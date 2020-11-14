@@ -4,21 +4,27 @@ import styled from "styled-components";
 import { AuthBranch, logoutUser } from "~/features/auth";
 import { Link, useHistory, useLocation } from "react-router-dom";
 import { HomeFilled, PlusOutlined } from "@ant-design/icons";
-import { Button, Dropdown, Menu, Space } from "antd";
+import { Button, Dropdown, Menu, Select, Space } from "antd";
 import { Container, Header } from "~/ui";
 import { Routes } from "../routes";
 import { paths } from "~/pages/paths";
 import { RootState } from "~/store";
+import { useTranslation } from "react-i18next";
 
 export const Main = () => {
-  const location = useLocation().pathname;
+  const { pathname } = useLocation();
   const history = useHistory();
   const dispatch = useDispatch();
-  const { email, isReady } = useSelector((state: RootState) => state.auth);
+  const { t, i18n } = useTranslation();
+  const { user, isReady } = useSelector((state: RootState) => state.auth);
 
   const handleLogout = () => {
     dispatch(logoutUser());
     history.push(paths.login());
+  };
+
+  const changeLanguage = (language) => {
+    i18n.changeLanguage(language);
   };
 
   const menu = (
@@ -31,9 +37,9 @@ export const Main = () => {
   return (
     <>
       <Header>
-        <Menu selectedKeys={[location]} mode="horizontal">
+        <Menu selectedKeys={[pathname]} mode="horizontal">
           <MenuItem key={paths.home()} icon={<HomeFilled />}>
-            <Link to={paths.home()}>Home</Link>
+            <Link to={paths.home()}>{t("header.home")}</Link>
           </MenuItem>
         </Menu>
         {isReady && (
@@ -41,23 +47,31 @@ export const Main = () => {
             <AuthBranch check="anon">
               <Link to={paths.login()}>
                 <Button
-                  type={location === paths.login() ? "primary" : "default"}
+                  type={pathname === paths.login() ? "primary" : "default"}
                 >
-                  Вход
+                  {t("header.login")}
                 </Button>
               </Link>
               <Link to={paths.register()}>
                 <Button
-                  type={location === paths.register() ? "primary" : "default"}
+                  type={pathname === paths.register() ? "primary" : "default"}
                 >
-                  Регистрация
+                  {t("header.register")}
                 </Button>
               </Link>
+              <Select
+                style={{ marginLeft: "10px" }}
+                onSelect={changeLanguage}
+                defaultValue={i18n.language}
+              >
+                <Select.Option value="ru">Русский</Select.Option>
+                <Select.Option value="en">English</Select.Option>
+              </Select>
             </AuthBranch>
             <AuthBranch check="auth">
               <Space>
                 <Dropdown overlay={menu} placement="bottomLeft" arrow>
-                  <Button>{email}</Button>
+                  <Button>{user?.email || user?.name}</Button>
                 </Dropdown>
                 <Link to={paths.create()}>
                   <Button
@@ -66,6 +80,10 @@ export const Main = () => {
                     icon={<PlusOutlined />}
                   />
                 </Link>
+                <Select onSelect={changeLanguage} defaultValue={i18n.language}>
+                  <Select.Option value="ru">Русский</Select.Option>
+                  <Select.Option value="en">English</Select.Option>
+                </Select>
               </Space>
             </AuthBranch>
           </RightHeader>

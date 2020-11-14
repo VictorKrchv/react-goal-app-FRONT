@@ -1,12 +1,14 @@
 import React from "react";
-import { Alert, Button, Card, Form, Input } from "antd";
+import { Alert, Button, Card, Form, Input, Space } from "antd";
 import styled from "styled-components";
 import { useDispatch, useSelector } from "react-redux";
 import { paths } from "../paths";
 import { Link } from "react-router-dom";
-import { checkEmail } from "../../lib/validators";
-import { loginUser, clearError } from "../../features/auth";
-import { RootState } from "../../store";
+import { checkEmail } from "~/lib/validators";
+import { loginUser, clearError } from "~/features/auth";
+import { RootState } from "~/store";
+import { useTranslation } from "react-i18next";
+import { FacebookLoginButton } from "~/features/auth/ui";
 
 interface Alert {
   type: "success" | "info" | "warning" | "error";
@@ -16,20 +18,18 @@ interface Alert {
 export const LoginPage = () => {
   const dispatch = useDispatch();
   const { fingerPrint, isPending, errorMessage } = useSelector(
-    (state: RootState) => state.auth,
+    (state: RootState) => state.auth
   );
+  const { t } = useTranslation();
   const [form] = Form.useForm();
 
   const onFinish = (values: LoginValues) => {
     dispatch(loginUser({ ...values, fingerPrint }));
   };
 
-  const onFinishFailed = (errorInfo: any) => {
-    console.log("Failed:", errorInfo);
-  };
   return (
     <LoginBox>
-      <Card title="Вход" bordered={false}>
+      <Card title={t("login.title")} bordered={false}>
         {errorMessage && (
           <Alert closable showIcon type="error" message={errorMessage} />
         )}
@@ -39,10 +39,9 @@ export const LoginPage = () => {
           name="basic"
           initialValues={{ remember: true }}
           onFinish={onFinish}
-          onFinishFailed={onFinishFailed}
         >
           <Form.Item
-            label="Введите ваш email"
+            label={t("login.emailLabel")}
             name="email"
             rules={[
               { required: true, message: "Поле не должно быть пустым" },
@@ -50,25 +49,32 @@ export const LoginPage = () => {
             ]}
             validateTrigger="onSubmit"
           >
-            <Input disabled={isPending} placeholder="Email" />
+            <Input
+              disabled={isPending}
+              placeholder={t("login.emailPlaceholder")}
+            />
           </Form.Item>
 
           <Form.Item
-            label="Введите ваш пароль"
+            label={t("login.passwordLabel")}
             name="password"
             rules={[{ required: true, message: "Поле не должно быть пустым" }]}
           >
-            <Input.Password disabled={isPending} placeholder="Пароль" />
+            <Input.Password
+              disabled={isPending}
+              placeholder={t("login.passwordPlaceholder")}
+            />
           </Form.Item>
           <Form.Item>
             <Button disabled={isPending} type="primary" htmlType="submit">
-              Войти
+              {t("login.button")}
             </Button>
           </Form.Item>
         </Form>
-        <Link to={paths.register()}>
-          Нет аккаунта? Перейдите на страницу регистрации.
-        </Link>
+        <Space direction="vertical">
+          <FacebookLoginButton />
+          <Link to={paths.register()}>{t("login.helpText")}</Link>
+        </Space>
       </Card>
     </LoginBox>
   );

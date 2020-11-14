@@ -1,0 +1,27 @@
+{
+  "header": {
+    "login": "Войти",
+    "register": "Регистрация",
+    "home": "Главная"
+  },
+  "login": {
+    "title": "Вход",
+    "button": "Войти",
+    "emailLabel": "Введите ваш email",
+    "emailPlaceholder": "Email",
+    "passwordLabel": "Введите ваш пароль",
+    "passwordPlaceholder": "Пароль",
+    "helpText": "Нет аккаунта? Перейдите на страницу регистрации."
+  },
+  "register": {
+    "title": "Регистрация",
+    "button": "Зарегестрироватся",
+    "emailLabel": "Введите ваш email",
+    "emailPlaceholder": "Email",
+    "passwordLabel": "Введите ваш пароль",
+    "passwordPlaceholder": "Пароль",
+    "repasswordLabel": "Пароль",
+    "repasswordPlaceholder": "Пароль",
+    "helpText": "Есть аккаунт? Перейдите на страницу логина"
+  }
+}

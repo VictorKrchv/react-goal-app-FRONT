@@ -1,5 +1,6 @@
 import { httpClient } from "./index";
 import { getFingerId } from "../finger-print";
+import { AUTH_URI } from "../constants";
 
 export type Token = {
   access_token: string;
@@ -14,10 +15,16 @@ export class TokenStorage {
     return new Promise((resolve, reject) => {
       getFingerId().then((result) => {
         httpClient
-          .post(`auth/refreshtoken`, {
-            refreshToken: this.getRefreshToken(),
-            fingerPrint: result.visitorId,
-          })
+          .post(
+            `refreshtoken`,
+            {
+              refreshToken: this.getRefreshToken(),
+              fingerPrint: result.visitorId,
+            },
+            {
+              baseURL: AUTH_URI,
+            }
+          )
           .then((response) => {
             this.storeToken(response.data.accessToken);
             this.storeRefreshToken(response.data.refreshToken);
@@ -37,7 +44,7 @@ export class TokenStorage {
   public static storeRefreshToken(refreshToken: string): void {
     localStorage.setItem(
       TokenStorage.LOCAL_STORAGE_REFRESH_TOKEN,
-      refreshToken,
+      refreshToken
     );
   }
 

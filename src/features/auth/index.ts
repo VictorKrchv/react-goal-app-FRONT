@@ -3,6 +3,7 @@ export {
   clearError,
   getUserData,
   loginUser,
+  loginUserFB,
   loginUserFailure,
   loginUserSuccess,
   logoutUser,

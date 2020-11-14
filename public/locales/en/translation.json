@@ -1,0 +1,27 @@
+{
+  "header": {
+    "login": "Login",
+    "register": "Register",
+    "home": "Home"
+  },
+  "login": {
+    "title": "Login",
+    "button": "Login",
+    "emailLabel": "Write your email",
+    "emailPlaceholder": "Email",
+    "passwordLabel": "Write your password",
+    "passwordPlaceholder": "Password",
+    "helpText": "Dont have an account? Go to register page"
+  },
+  "register": {
+    "title": "Register",
+    "button": "Register",
+    "emailLabel": "Write your email",
+    "emailPlaceholder": "Email",
+    "passwordLabel": "Write your password",
+    "passwordPlaceholder": "Password",
+    "repasswordLabel": "Repeat your password",
+    "repasswordPlaceholder": "Repeat password",
+    "helpText": "Already have an account? Go to login page"
+  }
+}

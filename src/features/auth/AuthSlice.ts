@@ -5,10 +5,14 @@ import { TokenStorage } from "~/lib/request/TokenStorage";
 import { getFingerId } from "~/lib/finger-print";
 
 const initialState: AuthState = {
-  id: 0,
-  email: "",
-  isReady: false,
+  user: {
+    email: "",
+    id: 0,
+    name: "",
+    avatar: "",
+  },
   isAuth: false,
+  isReady: false,
   fingerPrint: "",
   isPending: false,
   errorMessage: "",
@@ -19,17 +23,19 @@ const auth = createSlice({
   initialState,
   reducers: {
     loginUserSuccess(state, action: PayloadAction<UserData>) {
-      const { email, id } = action.payload;
+      const { email, id, name, avatar } = action.payload;
       state.isAuth = true;
-      state.email = email;
-      state.id = id;
+      state.user.email = email;
+      state.user.id = id;
+      state.user.name = name;
+      state.user.avatar = avatar;
     },
     loginUserFailure(state, action) {
       state.errorMessage = action.payload;
     },
     logoutUser(state) {
-      state.email = "";
-      state.id = 0;
+      state.user.email = "";
+      state.user.id = 0;
       state.isAuth = false;
       state.isReady = true;
       TokenStorage.clear();
@@ -65,9 +71,11 @@ export const getUserData = (): AppThunk => async (dispatch) => {
     const { visitorId } = await getFingerId();
     dispatch(setFingerId(visitorId));
     if (TokenStorage.getToken()) {
-      const { user } = await authApi.getUserData();
-      dispatch(loginUserSuccess({ email: user.email, id: user.id }));
+      const { email, name, id, avatar } = await authApi.getUserData();
+      dispatch(loginUserSuccess({ email, id, name, avatar }));
     }
+  } catch (e) {
+    console.log(e, "getUserData error");
   } finally {
     dispatch(setIsReady());
   }
@@ -78,14 +86,28 @@ export const loginUser = (values: LoginValues): AppThunk => async (
 ) => {
   try {
     dispatch(setIsPending(true));
-    const { accessToken, refreshToken, user } = await authApi.loginUser({
-      ...values,
-    });
+    const { accessToken, refreshToken, user } = await authApi.loginUser(values);
     TokenStorage.storeToken(accessToken);
     TokenStorage.storeRefreshToken(refreshToken);
-    dispatch(loginUserSuccess({ email: user.email, id: user.id }));
+    dispatch(loginUserSuccess(user));
   } catch (e) {
-    dispatch(loginUserFailure(e.response.data.message));
+    dispatch(loginUserFailure(e.response.data.message || e));
+  } finally {
+    dispatch(setIsPending(false));
+  }
+};
+
+export const loginUserFB = (values: LoginFacebookValues): AppThunk => async (
+  dispatch
+) => {
+  try {
+    dispatch(setIsPending(true));
+    const { accessToken, refreshToken, user } = await authApi.loginFB(values);
+    TokenStorage.storeToken(accessToken);
+    TokenStorage.storeRefreshToken(refreshToken);
+    dispatch(loginUserSuccess(user));
+  } catch (e) {
+    dispatch(loginUserFailure(e.response.data.message || e));
   } finally {
     dispatch(setIsPending(false));
   }

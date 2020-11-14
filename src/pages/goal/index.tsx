@@ -21,10 +21,12 @@ export const GoalPage = () => {
     (state: RootState) => state.goal
   );
 
-  const percent = Math.round(
-    (100 * currentGoal.plans.filter((plan) => plan.isComplete).length) /
-      currentGoal.plans.length
-  );
+  const percent =
+    currentGoal?.plans &&
+    Math.round(
+      (100 * currentGoal.plans.filter((plan) => plan.isComplete).length) /
+        currentGoal.plans.length
+    );
 
   React.useEffect(() => {
     dispatch(getGoal(id));
@@ -47,7 +49,9 @@ export const GoalPage = () => {
         <Progress percent={percent} />
         <PlanList />
       </Col>
-      <Col span={6}>Автор: {currentGoal?.author.email}</Col>
+      <Col span={6}>
+        Автор: {currentGoal?.author.name || currentGoal?.author.email}
+      </Col>
     </RowBox>
   );
 };

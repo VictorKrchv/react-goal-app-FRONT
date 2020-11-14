@@ -1,4 +1,5 @@
 import React from "react";
+import { hot } from "react-hot-loader";
 import { ThemeProvider } from "styled-components";
 import { GlobalStyles } from "./global-styles";
 import { Main } from "./pages/main";
@@ -6,9 +7,8 @@ import { useDispatch, useSelector } from "react-redux";
 import { getUserData } from "~/features/auth";
 import { RootState } from "./store";
 import { Spin } from "antd";
-import "antd/dist/antd.css";
 import { CenterContent } from "~/ui/templates/center-content";
-import { hot } from "react-hot-loader";
+import "antd/dist/antd.css";
 
 const theme = {
   primary: "rgb(42, 184, 213)",

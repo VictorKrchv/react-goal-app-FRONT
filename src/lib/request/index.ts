@@ -6,7 +6,7 @@ import axios, {
   Method,
 } from "axios";
 import { TokenStorage } from "./TokenStorage";
-import { BASE_URI } from "../constants";
+import { BASE_URI, AUTH_URI } from "../constants";
 
 export type AxiosRequestPayload = any;
 export type AxiosRequestParams = any;
@@ -46,7 +46,7 @@ interface HttpClientInterface {
   service: AxiosInstance;
 
   handleResponseSuccess(
-    response: AxiosResponse<AxiosResponsePayload>,
+    response: AxiosResponse<AxiosResponsePayload>
   ): AxiosResponse<AxiosResponsePayload>;
 
   handleResponseError(error: AxiosError): Promise<unknown>;
@@ -54,31 +54,31 @@ interface HttpClientInterface {
   get(
     path: AxiosPath,
     params?: AxiosRequestParams,
-    configs?: AxiosRequestConfig,
+    configs?: AxiosRequestConfig
   ): Promise<AxiosResponsePayload>;
   patch(
     path: AxiosPath,
     payload?: AxiosRequestPayload,
-    configs?: AxiosRequestConfig,
+    configs?: AxiosRequestConfig
   ): Promise<AxiosResponsePayload>;
   post(
     path: AxiosPath,
     payload?: AxiosRequestPayload,
-    configs?: AxiosRequestConfig,
+    configs?: AxiosRequestConfig
   ): Promise<AxiosResponsePayload>;
   put(
     path: AxiosPath,
     payload?: AxiosRequestPayload,
-    configs?: AxiosRequestConfig,
+    configs?: AxiosRequestConfig
   ): Promise<AxiosResponsePayload>;
   delete(
     path: AxiosPath,
-    configs?: AxiosRequestConfig,
+    configs?: AxiosRequestConfig
   ): Promise<AxiosResponsePayload>;
   request(
     method: Method,
     path: AxiosPath,
-    configs?: AxiosRequestConfig,
+    configs?: AxiosRequestConfig
   ): Promise<AxiosResponse>;
 }
 
@@ -92,7 +92,7 @@ export class HttpClientService implements HttpClientInterface {
     service.interceptors.request.use(this.handleRequest);
     service.interceptors.response.use(
       this.handleResponseSuccess,
-      this.handleResponseError,
+      this.handleResponseError
     );
 
     this.service = service;
@@ -119,19 +119,27 @@ export class HttpClientService implements HttpClientInterface {
   };
 
   public handleResponseSuccess = (
-    response: AxiosResponse<AxiosResponsePayload>,
+    response: AxiosResponse<AxiosResponsePayload>
   ): AxiosResponse<AxiosResponsePayload> => {
     return response;
   };
 
   public handleResponseError = (
-    error: AxiosError & { config: AxiosResponseWithRetry },
+    error: AxiosError & { config: AxiosResponseWithRetry }
   ): Promise<unknown> => {
     // Return any error which is not due to authentication back to the calling service
     if (
       (error.response && error.response.status !== 401) ||
       error.config._retry
     ) {
+      return new Promise((resolve, reject) => {
+        reject(error);
+      });
+    }
+
+    if (error.config.baseURL === AUTH_URI) {
+      TokenStorage.clear();
+
       return new Promise((resolve, reject) => {
         reject(error);
       });
@@ -181,7 +189,7 @@ export class HttpClientService implements HttpClientInterface {
   public get(
     url: string,
     params?: AxiosRequestParams,
-    configs?: AxiosRequestConfig,
+    configs?: AxiosRequestConfig
   ) {
     return this.service
       .request({
@@ -197,7 +205,7 @@ export class HttpClientService implements HttpClientInterface {
   public patch(
     url: AxiosPath,
     data?: AxiosRequestPayload,
-    configs?: AxiosRequestConfig,
+    configs?: AxiosRequestConfig
   ) {
     return this.service
       .request({
@@ -213,7 +221,7 @@ export class HttpClientService implements HttpClientInterface {
   public post(
     url: AxiosPath,
     data?: AxiosRequestPayload,
-    configs?: AxiosRequestConfig,
+    configs?: AxiosRequestConfig
   ) {
     return this.service
       .request({
@@ -229,7 +237,7 @@ export class HttpClientService implements HttpClientInterface {
   public put(
     url: AxiosPath,
     data?: AxiosRequestPayload,
-    configs?: AxiosRequestConfig,
+    configs?: AxiosRequestConfig
   ) {
     return this.service
       .request({

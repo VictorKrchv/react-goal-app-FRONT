@@ -5,6 +5,7 @@ import styled from "styled-components";
 import { authApi } from "../../api/auth";
 import { paths } from "../paths";
 import { checkEmail, confirmPassword } from "../../lib/validators";
+import { useTranslation } from "react-i18next";
 
 interface Alert {
   type: "success" | "info" | "warning" | "error";
@@ -18,6 +19,8 @@ export const RegisterPage = () => {
     type: "info",
     message: "",
   });
+
+  const { t } = useTranslation();
 
   const onFinish = (values: RegisterValues) => {
     setIsPending(true);
@@ -41,7 +44,7 @@ export const RegisterPage = () => {
 
   return (
     <LoginBox>
-      <Card title="Регистрация" bordered={false}>
+      <Card title={t("register.title")} bordered={false}>
         {alert.message && <Alert {...alert} closable />}
         <Form
           form={form}
@@ -52,7 +55,7 @@ export const RegisterPage = () => {
           onFinishFailed={onFinishFailed}
         >
           <Form.Item
-            label="Введите ваш email"
+            label={t("register.emailLabel")}
             name="email"
             rules={[
               { required: true, message: "Поле не должно быть пустым" },
@@ -60,19 +63,25 @@ export const RegisterPage = () => {
             ]}
             validateTrigger="onSubmit"
           >
-            <Input placeholder="Email" disabled={isPending} />
+            <Input
+              placeholder={t("register.emailPlaceholder")}
+              disabled={isPending}
+            />
           </Form.Item>
 
           <Form.Item
-            label="Введите ваш пароль"
+            label={t("register.passwordLabel")}
             name="password"
             rules={[{ required: true, message: "Поле не должно быть пустым" }]}
           >
-            <Input.Password disabled={isPending} placeholder="Пароль" />
+            <Input.Password
+              disabled={isPending}
+              placeholder={t("register.passwordPlaceholder")}
+            />
           </Form.Item>
 
           <Form.Item
-            label="Повторите ваш пароль"
+            label={t("register.repasswordLabel")}
             name="repassword"
             rules={[
               {
@@ -85,19 +94,17 @@ export const RegisterPage = () => {
           >
             <Input.Password
               disabled={isPending}
-              placeholder="Повторите ваш пароль"
+              placeholder={t("register.repasswordPlaceholder")}
             />
           </Form.Item>
 
           <Form.Item>
             <Button disabled={isPending} type="primary" htmlType="submit">
-              Зарегистрировать
+              {t("register.button")}
             </Button>
           </Form.Item>
         </Form>
-        <Link to={paths.login()}>
-          Есть аккаунт? Перейдите на страницу входа.
-        </Link>
+        <Link to={paths.login()}>{t("register.helpText")}</Link>
       </Card>
     </LoginBox>
   );

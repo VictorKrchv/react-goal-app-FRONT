@@ -8,7 +8,7 @@ import { CheckCircleOutlined } from "@ant-design/icons";
 
 export const PlanList = () => {
   const currentGoal = useSelector((state: RootState) => state.goal.currentGoal);
-  const { id: userId } = useSelector((state: RootState) => state.auth);
+  const { id: userId } = useSelector((state: RootState) => state.auth.user);
   const dispatch = useDispatch();
 
   const confirm = (id: number) => {
