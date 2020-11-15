@@ -12,7 +12,6 @@ export const GoalList = () => {
   }, []);
 
   const { list } = useSelector((state: RootState) => state.goal);
-  console.log(list);
   return (
     <Row>
       {list.map((item, idx) => (

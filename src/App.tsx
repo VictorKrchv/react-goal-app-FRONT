@@ -1,13 +1,13 @@
 import React from "react";
 import { hot } from "react-hot-loader";
-import { ThemeProvider } from "styled-components";
-import { GlobalStyles } from "./global-styles";
-import { Main } from "./pages/main";
 import { useDispatch, useSelector } from "react-redux";
+import { ThemeProvider } from "styled-components";
+import { Main } from "./pages/main";
 import { getUserData } from "~/features/auth";
 import { RootState } from "./store";
 import { Spin } from "antd";
-import { CenterContent } from "~/ui/templates/center-content";
+import { CenterContent } from "./ui";
+import { GlobalStyles } from "./global-styles";
 import "antd/dist/antd.css";
 
 const theme = {

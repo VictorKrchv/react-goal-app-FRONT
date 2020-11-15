@@ -1,5 +1,6 @@
 import { createSlice } from "@reduxjs/toolkit";
 import { goalApi } from "~/api/goal";
+import { errorMessage } from "~/lib/error-message";
 import { AppThunk } from "~/store";
 
 const initialState: GoalState = {
@@ -53,8 +54,8 @@ export const getListData = (): AppThunk => async (dispatch) => {
   try {
     const data = await goalApi.getList();
     dispatch(getListSuccess(data));
-  } catch (e) {
-    dispatch(getListFailure(e.response.data.message));
+  } catch (error) {
+    dispatch(getListFailure(errorMessage(error)));
   }
 };
 
@@ -64,8 +65,8 @@ export const getGoal = (id): AppThunk => async (dispatch) => {
   try {
     const data = await goalApi.getCurrentById(id);
     dispatch(getCurrentGoalSuccess(data));
-  } catch (e) {
-    dispatch(getListFailure(e.response.data.message));
+  } catch (error) {
+    dispatch(getListFailure(errorMessage(error)));
   }
 };
 

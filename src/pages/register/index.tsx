@@ -1,26 +1,24 @@
 import React from "react";
 import { Link } from "react-router-dom";
+import { useTranslation } from "react-i18next";
 import { Alert, Button, Card, Form, Input } from "antd";
 import styled from "styled-components";
-import { authApi } from "../../api/auth";
+import { authApi } from "~/api/auth";
 import { paths } from "../paths";
-import { checkEmail, confirmPassword } from "../../lib/validators";
-import { useTranslation } from "react-i18next";
-
-interface Alert {
-  type: "success" | "info" | "warning" | "error";
-  message: string;
-}
+import { checkEmail, confirmPassword } from "~/lib/validators";
+import { errorMessage } from "~/lib/error-message";
 
 export const RegisterPage = () => {
-  const [form] = Form.useForm();
   const [isPending, setIsPending] = React.useState<boolean>(false);
-  const [alert, setAlert] = React.useState<Alert>({
-    type: "info",
-    message: "",
-  });
-
+  const [alert, setAlert] = React.useState<Alert | null>(null);
+  const [form] = Form.useForm();
   const { t } = useTranslation();
+
+  React.useEffect(() => {
+    return () => {
+      setAlert(null);
+    };
+  }, []);
 
   const onFinish = (values: RegisterValues) => {
     setIsPending(true);
@@ -29,8 +27,11 @@ export const RegisterPage = () => {
       .then((res) => {
         setAlert({ type: "success", message: res.message });
       })
-      .catch(({ response }) => {
-        setAlert({ type: "error", message: response.data.message });
+      .catch((error) => {
+        setAlert({
+          type: "error",
+          message: errorMessage(error),
+        });
       })
       .finally(() => {
         setIsPending(false);
@@ -45,7 +46,7 @@ export const RegisterPage = () => {
   return (
     <LoginBox>
       <Card title={t("register.title")} bordered={false}>
-        {alert.message && <Alert {...alert} closable />}
+        {alert?.message && <Alert {...alert} closable />}
         <Form
           form={form}
           layout="vertical"
@@ -72,7 +73,14 @@ export const RegisterPage = () => {
           <Form.Item
             label={t("register.passwordLabel")}
             name="password"
-            rules={[{ required: true, message: "Поле не должно быть пустым" }]}
+            rules={[
+              { required: true, message: "Поле не должно быть пустым" },
+              {
+                min: 8,
+                max: 32,
+                message: "Пароль должен иметь от 8 до 32 символов",
+              },
+            ]}
           >
             <Input.Password
               disabled={isPending}
@@ -120,3 +128,8 @@ const LoginBox = styled.div`
     margin-bottom: 20px;
   }
 `;
+
+interface Alert {
+  type: "success" | "info" | "warning" | "error";
+  message: string;
+}

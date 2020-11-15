@@ -3,6 +3,7 @@ import { authApi } from "~/api/auth";
 import { AppThunk } from "~/store";
 import { TokenStorage } from "~/lib/request/TokenStorage";
 import { getFingerId } from "~/lib/finger-print";
+import { errorMessage } from "~/lib/error-message";
 
 const initialState: AuthState = {
   user: {
@@ -74,8 +75,8 @@ export const getUserData = (): AppThunk => async (dispatch) => {
       const { email, name, id, avatar } = await authApi.getUserData();
       dispatch(loginUserSuccess({ email, id, name, avatar }));
     }
-  } catch (e) {
-    console.log(e, "getUserData error");
+  } catch (error) {
+    console.log(error, "getUserData error");
   } finally {
     dispatch(setIsReady());
   }
@@ -90,8 +91,8 @@ export const loginUser = (values: LoginValues): AppThunk => async (
     TokenStorage.storeToken(accessToken);
     TokenStorage.storeRefreshToken(refreshToken);
     dispatch(loginUserSuccess(user));
-  } catch (e) {
-    dispatch(loginUserFailure(e.response.data.message || e));
+  } catch (error) {
+    dispatch(loginUserFailure(errorMessage(error)));
   } finally {
     dispatch(setIsPending(false));
   }
@@ -106,8 +107,8 @@ export const loginUserFB = (values: LoginFacebookValues): AppThunk => async (
     TokenStorage.storeToken(accessToken);
     TokenStorage.storeRefreshToken(refreshToken);
     dispatch(loginUserSuccess(user));
-  } catch (e) {
-    dispatch(loginUserFailure(e.response.data.message || e));
+  } catch (error) {
+    dispatch(loginUserFailure(errorMessage(error)));
   } finally {
     dispatch(setIsPending(false));
   }

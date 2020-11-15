@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { Alert, Button, Card, Form, Input, Space } from "antd";
 import styled from "styled-components";
 import { useDispatch, useSelector } from "react-redux";
@@ -22,6 +22,12 @@ export const LoginPage = () => {
   );
   const { t } = useTranslation();
   const [form] = Form.useForm();
+
+  useEffect(() => {
+    return () => {
+      dispatch(clearError());
+    };
+  }, []);
 
   const onFinish = (values: LoginValues) => {
     dispatch(loginUser({ ...values, fingerPrint }));
@@ -58,7 +64,14 @@ export const LoginPage = () => {
           <Form.Item
             label={t("login.passwordLabel")}
             name="password"
-            rules={[{ required: true, message: "Поле не должно быть пустым" }]}
+            rules={[
+              { required: true, message: "Поле не должно быть пустым" },
+              {
+                min: 8,
+                max: 32,
+                message: "Пароль должен иметь от 8 до 32 символов",
+              },
+            ]}
           >
             <Input.Password
               disabled={isPending}
